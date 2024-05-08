@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"api-go-gin/database"
 	"api-go-gin/models"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 // Controle de requisição
@@ -16,4 +18,19 @@ func GetName(context *gin.Context) {
 	context.JSON(200, gin.H{
 		"A api diz ": "ola " + name + ", como vai?",
 	})
+}
+
+func PostAluno(context *gin.Context) {
+	var aluno models.Aluno
+
+	if err := context.ShouldBindJSON(&aluno); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	database.DB.Create(&aluno)
+	context.JSON(http.StatusOK, aluno)
+
 }
